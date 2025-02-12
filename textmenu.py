@@ -25,8 +25,16 @@ class TextMenu:
                                                 function_to_call,
                                                 self.next_index())
 
-    def remove_menu_item(self, display_name: str) -> None:
+    def remove_menu_item(self, display_name: str, reindex: bool = True) -> None:
         del self.menu_items[display_name]
+        if reindex == True:
+            self.reindex()
+
+    def reindex(self) -> None:
+        i: int = 1
+        for menu_item in self.menu_items:
+            self.menu_items[menu_item].index = i
+            i += 1
 
     def get_user_input(self) -> None:
         pass
