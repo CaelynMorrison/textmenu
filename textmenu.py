@@ -1,8 +1,10 @@
+from collections.abc import Callable
+
 class MenuItem:
     """
     
     """
-    def __init__(self, display_name: str, function_to_call: str,
+    def __init__(self, display_name: str, callback: Callable,
                  index: int, *args: tuple,) -> None:
         """Initializes an instance of a menu item.
         
@@ -14,12 +16,12 @@ class MenuItem:
             index: Numerical representation of the menu item.
         """
         self.display_name = display_name
-        self.function_to_call = function_to_call
+        self.callback = callback
         self.args = args
         self.index = index
         self.aliases = [f"{index}", display_name.lower()]
 
-    def add_item_alias(self, *args: tuple) -> None:
+    def add_alias(self, *args: tuple) -> None:
         """Adds additional options to select menu item.
 
         Args:
@@ -29,7 +31,7 @@ class MenuItem:
             if alias.lower() not in self.aliases:
                 self.aliases.append(alias.lower())
 
-    def remove_item_alias(self, *args: tuple) -> None:
+    def remove_alias(self, *args: tuple) -> None:
         """Removes additional options to select menu item.
 
         Args:
@@ -49,7 +51,7 @@ class MenuItem:
         return f"{self.index}. {self.display_name}"
     
     def call_function(self):
-        self.function_to_call(*self.args)
+        self.callback(*self.args)
 
 class TextMenu:
     """A text-based menu.
@@ -92,7 +94,7 @@ class TextMenu:
         return len(self.menu_items) + 1
 
     def add_menu_item(self, display_name: str,
-                      function_to_call, *args: tuple) -> None:
+                      callback: Callable, *args: tuple) -> None:
         """Adds a new item to the menu.
 
         Args:
@@ -103,7 +105,7 @@ class TextMenu:
         if display_name in self.menu_items:
             raise KeyError("Menu item display_name must be unique.")
         self.menu_items[display_name] = (
-            MenuItem(display_name, function_to_call, self.next_index(), *args))
+            MenuItem(display_name, callback, self.next_index(), *args))
 
     def remove_menu_item(self, display_name: str,
                          reindex: bool = True) -> None:
@@ -128,6 +130,8 @@ class TextMenu:
         """
         i = 1
         for menu_item in self.menu_items:
+            self.menu_items[menu_item].remove_alias(
+                f"{self.menu_items[menu_item].index}")
             self.menu_items[menu_item].index = i
             i += 1
 
