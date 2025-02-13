@@ -19,26 +19,28 @@ class MenuItem:
         self.index = index
         self.aliases = [f"{index}", display_name.lower()]
 
-    def add_item_alias(self, alias: str) -> None:
+    def add_item_alias(self, *args: tuple) -> None:
         """Adds additional options to select menu item.
 
         Args:
-            alias: Alternate text input the select menu item.
+            args: Aliases to be added to the the select menu item.
         """
-        if alias.lower() not  in self.aliases:
-            self.aliases.append(alias.lower())
+        for alias in args:
+            if alias.lower() not in self.aliases:
+                self.aliases.append(alias.lower())
 
-    def remove_item_alias(self, alias: str) -> None:
+    def remove_item_alias(self, *args: tuple) -> None:
         """Removes additional options to select menu item.
 
         Args:
-            alias: Alternate text input the select menu item.
+            args: Aliases to be removed from the the select menu item.
         """
-        if alias.lower() in self.aliases:
-            self.aliases.remove(alias.lower())
-        else:
-            raise KeyError(f"{alias} is not a valid alias of "
-                           f"{self.display_name}.")
+        for alias in args:
+            if alias.lower() in self.aliases:
+                self.aliases.remove(alias.lower())
+            else:
+                raise KeyError(f"{alias} is not a valid alias of "
+                            f"{self.display_name}.")
 
     def __str__(self) -> str:
         """Returns string 
@@ -59,6 +61,7 @@ class TextMenu:
               the prompt for user input.        
     """
     def __init__(self, visibility: bool = True,
+                 space_before_list: bool = True,
                  space_before_prompt: bool = True,
                  reprompt: bool = True) -> None:
         """Initializes instance of a menu.
@@ -73,6 +76,7 @@ class TextMenu:
         """
         self.menu_items: dict = {}
         self.visibility = visibility
+        self.space_before_list = space_before_list
         self.space_before_prompt = space_before_prompt
         self.reprompt = reprompt
 
@@ -134,6 +138,8 @@ class TextMenu:
             prompt: String displayed to user to prompt input.
         """
         if self.visibility:
+            if self.space_before_prompt:
+                print()
             print(self, end="")
         if self.space_before_prompt:
             print()
