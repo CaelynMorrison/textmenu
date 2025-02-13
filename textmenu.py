@@ -10,12 +10,14 @@ class MenuItem:
             display_name: Name of the menu item.
             function_to_call: String representing function to be called when
               the menu item is selected by the user.
+            args: arguments to pass to the function when called.
+            index: Numerical representation of the menu item.
         """
         self.display_name = display_name
         self.function_to_call = function_to_call
         self.args = args
         self.index = index
-        self.aliases = [f"{index}", display_name]
+        self.aliases = [f"{index}", display_name.lower()]
 
     def add_item_alias(self, alias: str) -> None:
         """Adds additional options to select menu item.
@@ -23,7 +25,20 @@ class MenuItem:
         Args:
             alias: Alternate text input the select menu item.
         """
-        self.aliases.append(alias) 
+        if alias.lower() not  in self.aliases:
+            self.aliases.append(alias.lower())
+
+    def remove_item_alias(self, alias: str) -> None:
+        """Removes additional options to select menu item.
+
+        Args:
+            alias: Alternate text input the select menu item.
+        """
+        if alias.lower() in self.aliases:
+            self.aliases.remove(alias.lower())
+        else:
+            raise KeyError(f"{alias} is not a valid alias of "
+                           f"{self.display_name}.")
 
     def __str__(self) -> str:
         """Returns string 
@@ -38,10 +53,14 @@ class TextMenu:
     """A text-based menu.
     Attributes:
         menu_items: Dictionary containing the menu items making up the menu.
-        visibility: 
+        visibility: Determines if menu items are listed before user is prompted
+          for input.
+        space_before_prompt: Determines if a blank line is printed before
+              the prompt for user input.        
     """
     def __init__(self, visibility: bool = True,
-                 space_before_prompt: bool = True) -> None:
+                 space_before_prompt: bool = True,
+                 reprompt: bool = True) -> None:
         """Initializes instance of a menu.
 
         Args:
@@ -49,10 +68,13 @@ class TextMenu:
               user is prompted for input.
             space_before_prompt: Determines if a blank line is printed before
               the prompt for user input.
+            reprompt: Determines if user should be reprompted if input is
+              not found.
         """
         self.menu_items: dict = {}
         self.visibility = visibility
         self.space_before_prompt = space_before_prompt
+        self.reprompt = reprompt
 
     def __str__(self) -> str:
         """Returns line separated list of the items in the menu.
@@ -115,9 +137,13 @@ class TextMenu:
             print(self, end="")
         if self.space_before_prompt:
             print()
-        user_input = input(prompt)
+        user_input = input(prompt).lower()
+        found = False
         for menu_item in self.menu_items:
             if user_input in self.menu_items[menu_item].aliases:
+                found = True
                 self.menu_items[menu_item].call_function()
                 break
+        if found == False and self.reprompt == True:
+            self.get_user_input(prompt) 
 
