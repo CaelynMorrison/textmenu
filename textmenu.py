@@ -3,7 +3,7 @@ class MenuItem:
     
     """
     def __init__(self, display_name: str, function_to_call: str,
-                 args: str, index: int) -> None:
+                 index: int, *args: tuple,) -> None:
         """Initializes an instance of a menu item.
         
         Args:
@@ -49,7 +49,7 @@ class MenuItem:
         return f"{self.index}. {self.display_name}"
     
     def call_function(self):
-        self.function_to_call(f"{self.args}")
+        self.function_to_call(*self.args)
 
 class TextMenu:
     """A text-based menu.
@@ -92,7 +92,7 @@ class TextMenu:
         return len(self.menu_items) + 1
 
     def add_menu_item(self, display_name: str,
-                      function_to_call, args: str = "") -> None:
+                      function_to_call, *args: tuple) -> None:
         """Adds a new item to the menu.
 
         Args:
@@ -103,7 +103,7 @@ class TextMenu:
         if display_name in self.menu_items:
             raise KeyError("Menu item display_name must be unique.")
         self.menu_items[display_name] = (
-            MenuItem(display_name, function_to_call, args, self.next_index()))
+            MenuItem(display_name, function_to_call, self.next_index(), *args))
 
     def remove_menu_item(self, display_name: str,
                          reindex: bool = True) -> None:
