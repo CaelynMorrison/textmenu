@@ -21,7 +21,7 @@ class MenuItem:
         self.index = index
         self.aliases = [f"{index}", display_name.lower()]
 
-    def add_alias(self, *args: tuple) -> None:
+    def add_alias(self, *args: str) -> None:
         """Adds additional options to select menu item.
 
         Args:
@@ -31,7 +31,7 @@ class MenuItem:
             if alias.lower() not in self.aliases:
                 self.aliases.append(alias.lower())
 
-    def remove_alias(self, *args: tuple) -> None:
+    def remove_alias(self, *args: str) -> None:
         """Removes additional options to select menu item.
 
         Args:
